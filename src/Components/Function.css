@@ -1,64 +1,199 @@
-.unified-transfer-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.function-transfer-container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #f8f9fa;
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.db-panel {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.db-panel h3 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.db-panel select {
-  width: 100%;
-  padding: 6px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.function-list {
-  max-height: 150px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 8px;
-  background: #fafafa;
-  border-radius: 6px;
-}
-
-.button-container {
+.database-panels-container {
   display: flex;
-  gap: 12px;
+  gap: 30px;
+  margin-bottom: 30px;
 }
 
-.button-container button {
-  padding: 10px 16px;
-  background: #007bff;
-  border: none;
-  color: white;
-  border-radius: 6px;
+.database-panel {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.panel-header {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: #495057;
+}
+
+.mongo-panel .panel-header {
+  color: #4CAF50;
+}
+
+.couchbase-panel .panel-header {
+  color: #2196F3;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.functions-section {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.functions-list-container {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.functions-list-container h3 {
+  margin-top: 0;
+  color: #495057;
+}
+
+.functions-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 10px;
+  background: white;
+}
+
+.no-functions {
+  padding: 10px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.select-all-functions {
+  padding: 8px 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.select-all-functions label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
   cursor: pointer;
 }
 
-.button-container button:hover {
-  background: #0056b3;
+.function-item {
+  padding: 8px 0;
+}
+
+.function-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.transfer-actions {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.single-transfer {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.single-transfer label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.single-transfer select {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.transfer-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.transfer-button.primary {
+  background-color: #4CAF50;
+}
+
+.transfer-button.primary:hover {
+  background-color: #45a049;
+}
+
+.transfer-button.secondary {
+  background-color: #2196F3;
+}
+
+.transfer-button.secondary:hover {
+  background-color: #0b7dda;
+}
+
+.transfer-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.status-messages {
+  margin-top: 20px;
 }
 
 .status-message {
-  color: green;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
-.error-message {
-  color: red;
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
