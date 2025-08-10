@@ -1,0 +1,275 @@
+/* 
+
+
+.analysis-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.analysis-header {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  gap: 1.5rem;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  flex: 1;
+  min-width: 200px;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
+.summary-card h3 {
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.summary-card p {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin: 0;
+}
+
+
+.data-size-container {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.data-size-header {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.metric-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  min-width: 200px;
+  text-align: center;
+}
+
+.metric-card h4 {
+  color: #7f8c8d;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.metric-card p {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: 300;
+}
+
+
+.navigation-buttons {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.proceed-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.proceed-button:hover {
+  background: #2980b9;
+}
+
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+.error-container {
+  color: #e74c3c;
+}
+
+
+@media (max-width: 768px) {
+  .summary-row {
+    flex-direction: column;
+  }
+  
+  .metric-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}  */
+
+/* AnalysisPage.css */
+
+/* Main Container */
+.analysis-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.analysis-header {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+/* Summary Section - Horizontal Row */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  gap: 1.5rem;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  flex: 1;
+  min-width: 200px;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
+.summary-card h3 {
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.summary-card h4 {
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.summary-card p {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin: 0;
+}
+
+/* Data Size Section */
+.data-size-container {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+}
+
+.data-size-header {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+/* Buttons */
+.navigation-buttons {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.proceed-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.proceed-button:hover {
+  background: #2980b9;
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+.error-container {
+  color: #e74c3c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summary-row {
+    flex-direction: column;
+  }
+}
+
+/* Add this to your existing Analysispage.css */
+/* .summary-card small {
+  display: block;
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+} */

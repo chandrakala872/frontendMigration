@@ -164,13 +164,13 @@ const Navbar = () => {
 
       <div className={`navbar-menu ${isMobileMenuOpen ? "active" : ""}`}>
         {/* Main navigation links */}
-        <Link
+        {/* <Link
           to="/"
           className={`navbar-item ${location.pathname === "/" ? "active-link" : ""}`}
           onClick={() => setMobileMenuOpen(false)}
         >
           Dashboard
-        </Link>
+        </Link> */}
         <Link
           to="/migration-wizard"
           className={`navbar-item ${location.pathname === "/migration-wizard" ? "active-link" : ""}`}

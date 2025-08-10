@@ -9,6 +9,7 @@ import Login from './Components/Login';
 import Logout from './Components/Logout';
  import Collection from './Components/Collection'
  import Function from './Components/Function';
+ import Analysispage from './Components/Analysispage'
 import './App.css';
 
 const App = () => {
@@ -22,13 +23,14 @@ const App = () => {
         <div className="main-content">
           <Routes>
             {/* Dashboard */}
-            <Route path="/" element={<Dashboard />} />
+            {/* <Route path="/" element={<Dashboard />} /> */}
             
             {/* Migration Wizard - renders your Migration component */}
             <Route path="/migration-wizard" element={<Migration />} />
              {/* <Route path="/collection" element={<Collection />} /> */}
              <Route path="/functions" element={<Function />} />
         <Route path="/collections" element={<Collection />} />
+         <Route path="/analysis" element={<Analysispage />} />
             
             {/* Settings */}
             <Route path="/settings" element={<Settings />} />

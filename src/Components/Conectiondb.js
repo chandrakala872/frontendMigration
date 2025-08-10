@@ -329,6 +329,7 @@ const MigrationConnection = () => {
     try {
       await uploadMongoCert();
       await connectMongo();
+      setError('');
 
       // Convert cert to base64
       const mongoCertBase64 = await fileToBase64(mongoCert);
@@ -433,7 +434,18 @@ const MigrationConnection = () => {
         <div style={{ flex: 1, border: '1px solid #ccc', padding: 20, borderRadius: 8 }}>
           <h3>MongoDB Connection</h3>
           <input type="file" accept=".pem,.crt" onChange={(e) => setMongoCert(e.target.files[0])} disabled={mongoConnected} />
-          <input type="text" placeholder="MongoDB URI" value={mongoUri} onChange={(e) => setMongoUri(e.target.value)} disabled={mongoConnected} style={{ width: '100%', marginTop: 8 }} />
+         <input
+  type="text"
+  placeholder="MongoDB URI"
+  value={mongoUri}
+  onChange={(e) => {
+    setMongoUri(e.target.value);
+    setError('');
+  }}
+  disabled={mongoConnected}
+  style={{ width: '100%', marginTop: 8 }}
+/>
+
           <button onClick={handleMongoSetup} disabled={mongoConnected} style={{ marginTop: 8 }}>
             {mongoConnected ? ' Connected' : 'Upload & Connect'}
           </button>
@@ -441,7 +453,7 @@ const MigrationConnection = () => {
           {/* Download-only Metadata Section */}
           {mongoMetadata && (
             <div style={{ marginTop: 20 }}>
-              <button
+              {/* <button
                 style={{
                   padding: '6px 12px',
                   marginTop: 8,
@@ -454,23 +466,79 @@ const MigrationConnection = () => {
                 onClick={downloadMongoMetadata}
               >
                 Download Metadata
-              </button>
+              </button> */}
             </div>
           )}
         </div>
 
         {/* Couchbase */}
         <div style={{ flex: 1, border: '1px solid #ccc', padding: 20, borderRadius: 8 }}>
-          <h3>Couchbase Connection</h3>
-          <input type="file" accept=".pem,.crt" onChange={(e) => setCouchCert(e.target.files[0])} disabled={couchConnected} />
-          <input type="text" placeholder="couchbases://127.0.0.1" value={couchUri} onChange={(e) => setCouchUri(e.target.value)} disabled={couchConnected} style={{ width: '100%', marginTop: 8 }} />
-          <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} disabled={couchConnected} style={{ width: '100%', marginTop: 8 }} />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={couchConnected} style={{ width: '100%', marginTop: 8 }} />
-          <input type="text" placeholder="Bucket Name" value={bucketName} onChange={(e) => setBucketName(e.target.value)} disabled={couchConnected} style={{ width: '100%', marginTop: 8 }} />
-          <button onClick={handleCouchSetup} disabled={couchConnected} style={{ marginTop: 8 }}>
-            {couchConnected ? ' Connected' : 'Upload & Connect'}
-          </button>
-        </div>
+  <h3>Couchbase Connection</h3>
+
+  <input
+    type="file"
+    accept=".pem,.crt"
+    onChange={(e) => setCouchCert(e.target.files[0])}
+    disabled={couchConnected}
+  />
+
+  <input
+    type="text"
+    placeholder="couchbases://127.0.0.1"
+    value={couchUri}
+    onChange={(e) => {
+      setCouchUri(e.target.value);
+      setError('');
+    }}
+    disabled={couchConnected}
+    style={{ width: '100%', marginTop: 8 }}
+  />
+
+  <input
+    type="text"
+    placeholder="Username"
+    value={username}
+    onChange={(e) => {
+      setUsername(e.target.value);
+      setError('');
+    }}
+    disabled={couchConnected}
+    style={{ width: '100%', marginTop: 8 }}
+  />
+
+  <input
+    type="password"
+    placeholder="Password"
+    value={password}
+    onChange={(e) => {
+      setPassword(e.target.value);
+      setError('');
+    }}
+    disabled={couchConnected}
+    style={{ width: '100%', marginTop: 8 }}
+  />
+
+  <input
+    type="text"
+    placeholder="Bucket Name"
+    value={bucketName}
+    onChange={(e) => {
+      setBucketName(e.target.value);
+      setError('');
+    }}
+    disabled={couchConnected}
+    style={{ width: '100%', marginTop: 8 }}
+  />
+
+  <button
+    onClick={handleCouchSetup}
+    disabled={couchConnected}
+    style={{ marginTop: 8 }}
+  >
+    {couchConnected ? ' Connected' : 'Upload & Connect'}
+  </button>
+</div>
+
       </div>
 
       {/* Error */}
@@ -479,12 +547,28 @@ const MigrationConnection = () => {
       {/* Navigation Buttons */}
       {mongoConnected && couchConnected && (
         <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
-          <button style={{ padding: '10px 20px', background: '#007bff', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }} onClick={() => navigate('/collections')}>
+          {/* <button style={{ padding: '10px 20px', background: '#007bff', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }} onClick={() => navigate('/collections')}>
             Migrate Collections
-          </button>
-          <button style={{ padding: '10px 20px', background: '#28a745', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }} onClick={() => navigate('/functions')}>
+          </button> */}
+          {/* <button style={{ padding: '10px 20px', background: '#28a745', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }} onClick={() => navigate('/functions')}>
             Migrate Functions
-          </button>
+          </button> */}
+           {/* </button> */}
+    {/* Add this new button */}
+    <button 
+      style={{ 
+        padding: '10px 20px', 
+        background: '#6f42c1', 
+        color: 'white', 
+        border: 'none', 
+        borderRadius: 4, 
+        cursor: 'pointer',
+        justifyContent:"center" 
+      }} 
+      onClick={() => navigate('/analysis')}
+    >
+      Proceed to Migration Analysis
+    </button>
         </div>
       )}
     </div>

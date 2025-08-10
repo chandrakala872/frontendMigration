@@ -481,17 +481,15 @@
 
 
 
-
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
- import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import './Collection.css';
 
 const API_BASE = 'http://localhost:8080/api/transfer';
 
 const prependAll = (arr) => (Array.isArray(arr) ? ['All', ...arr] : ['All']);
-
 
 export default function Collection() {
   const { getAccessTokenSilently } = useAuth0();
@@ -517,12 +515,117 @@ export default function Collection() {
   const [migrationLog, setMigrationLog] = useState([]);
   const [isMigrating, setIsMigrating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(new Date());
 
   const getAuthHeader = async () => {
     const token = await getAccessTokenSilently();
     return { Authorization: `Bearer ${token}` };
   };
 
+  // Auto-refresh data every 5 seconds
+  useEffect(() => {
+    const refreshData = async () => {
+      if (isMigrating) return; // Don't refresh during migration
+
+      try {
+        setIsLoading(true);
+        const headers = await getAuthHeader();
+
+        // Refresh databases
+        const dbRes = await axios.get(`${API_BASE}/databases`, { headers });
+        if (Array.isArray(dbRes.data)) {
+          setDatabases(dbRes.data);
+          if (!selectedDatabase && dbRes.data.length) {
+            setSelectedDatabase(dbRes.data[0]);
+          }
+        }
+
+        // Refresh buckets
+        const bucketRes = await axios.get(`${API_BASE}/buckets`, { headers });
+        const bucketList = bucketRes.data?.buckets || [];
+        setBuckets(bucketList);
+        if (!selectedBucket && bucketList.length) {
+          setSelectedBucket(bucketList[0]);
+        }
+
+        setLastRefresh(new Date());
+      } catch (e) {
+        console.error('Auto-refresh error:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Initial load
+    refreshData();
+
+    // Set up interval for auto-refresh
+    const interval = setInterval(refreshData, 5000);
+    return () => clearInterval(interval);
+  }, [isMigrating, selectedDatabase, selectedBucket]);
+
+  // Refresh collections when database changes or on auto-refresh
+  useEffect(() => {
+    const fetchCollections = async () => {
+      if (!selectedDatabase) return;
+      
+      try {
+        const headers = await getAuthHeader();
+        const res = await axios.get(
+          `${API_BASE}/databases/${encodeURIComponent(selectedDatabase)}/collections`,
+          { headers }
+        );
+        if (Array.isArray(res.data)) {
+          setCollections(prependAll(res.data));
+        }
+      } catch (e) {
+        console.error('Failed to refresh collections:', e);
+      }
+    };
+
+    fetchCollections();
+  }, [selectedDatabase, lastRefresh]);
+
+  // Refresh scopes and collections when bucket changes or on auto-refresh
+  useEffect(() => {
+    const fetchBucketData = async () => {
+      if (!selectedBucket) return;
+      
+      try {
+        const headers = await getAuthHeader();
+        await axios.post(
+          `${API_BASE}/select-bucket`,
+          null,
+          { headers, params: { bucketName: selectedBucket } }
+        );
+        const res = await axios.get(`${API_BASE}/couchbase-collections`, {
+          headers,
+          params: { bucketName: selectedBucket },
+        });
+        
+        if (res.data && typeof res.data === 'object') {
+          const mapping = res.data;
+          const scopeList = Object.keys(mapping);
+          setScopes(scopeList);
+          
+          if (!selectedScope && scopeList.length) {
+            setSelectedScope(scopeList[0]);
+          }
+          
+          const activeScope = selectedScope || (scopeList.length ? scopeList[0] : '');
+          if (activeScope) {
+            setCouchCollections(prependAll(mapping[activeScope] || []));
+          }
+        }
+      } catch (e) {
+        console.error('Failed to refresh bucket data:', e);
+      }
+    };
+
+    fetchBucketData();
+  }, [selectedBucket, selectedScope, lastRefresh]);
+
+  // [REST OF THE ORIGINAL CODE REMAINS EXACTLY THE SAME]
   // Filter collections based on search term
   const filteredMongoCollections = useMemo(() => {
     return collections.filter(collection => 
@@ -535,137 +638,6 @@ export default function Collection() {
       collection.toLowerCase().includes(couchSearchTerm.toLowerCase())
     );
   }, [couchCollections, couchSearchTerm]);
-
-  // Fetch MongoDB databases
-  const fetchDatabases = async () => {
-    try {
-      setIsLoading(true);
-      const headers = await getAuthHeader();
-      const res = await axios.get(`${API_BASE}/databases`, { headers });
-      if (Array.isArray(res.data)) {
-        setDatabases(res.data);
-        if (!selectedDatabase && res.data.length) setSelectedDatabase(res.data[0]);
-      }
-    } catch (e) {
-      setError('Failed to fetch MongoDB databases');
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch collections for selected database
-  const fetchCollectionsForDB = async (db) => {
-    if (!db) return;
-    try {
-      setIsLoading(true);
-      const headers = await getAuthHeader();
-      const res = await axios.get(
-        `${API_BASE}/databases/${encodeURIComponent(db)}/collections`,
-        { headers }
-      );
-      if (Array.isArray(res.data)) {
-        setCollections(prependAll(res.data));
-        setSelectedMongoCollections(['All']);
-      }
-    } catch (e) {
-      setError('Failed to fetch MongoDB collections');
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch Couchbase buckets
-  const fetchBuckets = async () => {
-    try {
-      setIsLoading(true);
-      const headers = await getAuthHeader();
-      const res = await axios.get(`${API_BASE}/buckets`, { headers });
-      const bucketList = res.data?.buckets || [];
-      setBuckets(bucketList);
-      if (!selectedBucket && bucketList.length) setSelectedBucket(bucketList[0]);
-    } catch (e) {
-      setError('Failed to fetch Couchbase buckets');
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch scopes and collections for selected bucket
-  const fetchScopesAndCollections = async (bucket) => {
-    if (!bucket) return;
-    try {
-      setIsLoading(true);
-      const headers = await getAuthHeader();
-      await axios.post(
-        `${API_BASE}/select-bucket`,
-        null,
-        { headers, params: { bucketName: bucket } }
-      );
-      const res = await axios.get(`${API_BASE}/couchbase-collections`, {
-        headers,
-        params: { bucketName: bucket },
-      });
-      if (res.data && typeof res.data === 'object') {
-        const mapping = res.data;
-        const scopeList = Object.keys(mapping);
-        setScopes(scopeList);
-        if (!selectedScope && scopeList.length) setSelectedScope(scopeList[0]);
-        const activeScope = selectedScope || scopeList[0];
-        setCouchCollections(prependAll(mapping[activeScope] || []));
-        setSelectedCouchCollections(['All']);
-      }
-    } catch (e) {
-      setError('Failed to fetch Couchbase scopes/collections');
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle scope change
-  useEffect(() => {
-    if (!selectedBucket || !selectedScope) return;
-    const update = async () => {
-      try {
-        const headers = await getAuthHeader();
-        const res = await axios.get(`${API_BASE}/couchbase-collections`, {
-          headers,
-          params: { bucketName: selectedBucket },
-        });
-        if (res.data && typeof res.data === 'object') {
-          setCouchCollections(prependAll(res.data[selectedScope] || []));
-          setSelectedCouchCollections(['All']);
-        }
-      } catch (e) {
-        setError('Failed to update Couchbase collections');
-        console.error(e);
-      }
-    };
-    void update();
-  }, [selectedScope, selectedBucket]);
-
-  // Initial data fetching
-  useEffect(() => {
-    void fetchDatabases();
-    void fetchBuckets();
-  }, []);
-
-  // Fetch collections when database changes
-  useEffect(() => {
-    if (selectedDatabase) {
-      void fetchCollectionsForDB(selectedDatabase);
-    }
-  }, [selectedDatabase]);
-
-  // Fetch scopes and collections when bucket changes
-  useEffect(() => {
-    if (selectedBucket) {
-      void fetchScopesAndCollections(selectedBucket);
-    }
-  }, [selectedBucket, selectedScope]);
 
   // Toggle MongoDB collection selection
   const toggleMongoCollection = (col) => {
@@ -784,13 +756,15 @@ export default function Collection() {
     }
   };
 
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <div className="migration-container">
       <div className="migration-header">
-        {/* <h1>Database Migration Tool</h1> */}
-        {/* <p>Transfer data between MongoDB and Couchbase collections</p> */}
+        <div className="refresh-info">
+          Last refreshed: {lastRefresh.toLocaleTimeString()}
+          <span className="auto-refresh-note">(Auto-refreshing every 5 seconds)</span>
+        </div>
       </div>
 
       <div className="migration-content">
@@ -806,7 +780,7 @@ export default function Collection() {
               <select 
                 value={selectedDatabase} 
                 onChange={(e) => setSelectedDatabase(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading || isMigrating}
               >
                 {databases.map((db) => (
                   <option key={db} value={db}>{db}</option>
@@ -822,6 +796,7 @@ export default function Collection() {
                   placeholder="Search collections..."
                   value={mongoSearchTerm}
                   onChange={(e) => setMongoSearchTerm(e.target.value)}
+                  disabled={isMigrating}
                 />
               </div>
               <div className="collections-list">
@@ -836,6 +811,7 @@ export default function Collection() {
                             : selectedMongoCollections.includes(col)
                         }
                         onChange={() => toggleMongoCollection(col)}
+                        disabled={isMigrating}
                       />
                       <span>{col}</span>
                     </label>
@@ -861,7 +837,7 @@ export default function Collection() {
               <select 
                 value={selectedBucket} 
                 onChange={(e) => setSelectedBucket(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading || isMigrating}
               >
                 {buckets.map((b) => (
                   <option key={b} value={b}>{b}</option>
@@ -874,7 +850,7 @@ export default function Collection() {
               <select 
                 value={selectedScope} 
                 onChange={(e) => setSelectedScope(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading || isMigrating}
               >
                 {scopes.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -890,6 +866,7 @@ export default function Collection() {
                   placeholder="Search collections..."
                   value={couchSearchTerm}
                   onChange={(e) => setCouchSearchTerm(e.target.value)}
+                  disabled={isMigrating}
                 />
               </div>
               <div className="collections-list">
@@ -904,6 +881,7 @@ export default function Collection() {
                             : selectedCouchCollections.includes(col)
                         }
                         onChange={() => toggleCouchCollection(col)}
+                        disabled={isMigrating}
                       />
                       <span>{col}</span>
                     </label>
@@ -938,37 +916,41 @@ export default function Collection() {
         </div>
 
         {migrationLog.length > 0 && (
-  <div className="migration-log">
-    <h3>Migration Log</h3>
-    <div className="log-content">
-      {migrationLog.map((line, i) => (
-        <div key={i} className="log-entry">
-          {line.includes('Successfully') ? (
-            <span className="success-icon">✓</span>
-          ) : line.includes('Failed') ? (
-            <span className="error-icon">✗</span>
-          ) : (
-            <span className="info-icon">ℹ</span>
-          )}
-          <span>{line}</span>
-        </div>
-      ))}
-    </div>
-    <button 
-      className="function-button"
-      onClick={() => navigate('/functions', { 
-        state: { 
-          selectedDatabase,
-          selectedBucket,
-          selectedScope 
-        } 
-      })}
-    >
-      Migrate Functions
-    </button>
-  </div>
-)}
+          <div className="migration-log">
+            <h3>Migration Log</h3>
+            <div className="log-content">
+              {migrationLog.map((line, i) => (
+                <div key={i} className="log-entry">
+                  {line.includes('Successfully') ? (
+                    <span className="success-icon">✓</span>
+                  ) : line.includes('Failed') ? (
+                    <span className="error-icon">✗</span>
+                  ) : (
+                    <span className="info-icon">ℹ</span>
+                  )}
+                  <span>{line}</span>
+                </div>
+              ))}
+            </div>
+            <button 
+              className="function-button"
+              onClick={() => navigate('/functions', { 
+                state: { 
+                  selectedDatabase,
+                  selectedBucket,
+                  selectedScope 
+                } 
+              })}
+              disabled={isMigrating}
+            >
+              Migrate Functions
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
+
+
