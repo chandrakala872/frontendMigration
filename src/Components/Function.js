@@ -3612,6 +3612,7 @@ export default function UnifiedFunctionTransfer() {
               {loading.transferAll
                 ? `Transferring (${selectedFunctions.length})...`
                 : `Transfer All Selected (${selectedFunctions.length})`}
+                
             </button>
             {/* <FunctionProgressbar/> */}
           </div>
@@ -3623,6 +3624,8 @@ export default function UnifiedFunctionTransfer() {
         {statusMessage && <div className="status-message success">{statusMessage}</div>}
         {errorMessage && <div className="status-message error">{errorMessage}</div>}
       </div>
+
+      <FunctionProgressbar/>
     </div>
   );
 }

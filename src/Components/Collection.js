@@ -486,6 +486,7 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from "react-router-dom";
 import './Collection.css';
+import Migrationwebsocket from './Migrationwebsocket';
 
 const API_BASE = 'http://localhost:8080/api/transfer';
 
@@ -762,8 +763,8 @@ export default function Collection() {
     <div className="migration-container">
       <div className="migration-header">
         <div className="refresh-info">
-          Last refreshed: {lastRefresh.toLocaleTimeString()}
-          <span className="auto-refresh-note">(Auto-refreshing every 5 seconds)</span>
+          {/* Last refreshed: {lastRefresh.toLocaleTimeString()} */}
+          {/* <span className="auto-refresh-note">(Auto-refreshing every 5 seconds)</span> */}
         </div>
       </div>
 
@@ -912,10 +913,25 @@ export default function Collection() {
                 Migrating...
               </>
             ) : 'Start Migration'}
+            
           </button>
+          {/* <Migrationwebsocket/> */}
+
+          <Migrationwebsocket
+  migrations={[
+    {
+      source: { database: 'db1', collection: 'coll1' },
+      target: { bucket: 'bucket1', scope: 'scope1', collection: 'coll1' }
+    },
+    {
+      source: { database: 'db1', collection: 'coll2' },
+      target: { bucket: 'bucket1', scope: 'scope1', collection: 'coll2' }
+    }
+  ]}
+/>
         </div>
 
-        {migrationLog.length > 0 && (
+        {/* {migrationLog.length > 0 && (
           <div className="migration-log">
             <h3>Migration Log</h3>
             <div className="log-content">
@@ -931,7 +947,10 @@ export default function Collection() {
                   <span>{line}</span>
                 </div>
               ))}
-            </div>
+            </div> */}
+
+
+
             <button 
               className="function-button"
               onClick={() => navigate('/functions', { 
@@ -945,8 +964,8 @@ export default function Collection() {
             >
               Migrate Functions
             </button>
-          </div>
-        )}
+          {/* </div> */}
+        {/* // )} */}
       </div>
     </div>
   );
