@@ -1,486 +1,3 @@
-// import React, { useState, useEffect, useMemo } from 'react';
-// import axios from 'axios';
-// import { useAuth0 } from '@auth0/auth0-react';
-// // import { useNavigate } from "react-router-dom";
-// import './Collection.css';
-
-// const API_BASE = 'http://localhost:8080/api/transfer';
-
-// const prependAll = (arr) => (Array.isArray(arr) ? ['All', ...arr] : ['All']);
-// // const navigate = useNavigate();
-
-// export default function Collection() {
-//   const { getAccessTokenSilently } = useAuth0();
-
-//   // MongoDB State
-//   const [databases, setDatabases] = useState([]);
-//   const [selectedDatabase, setSelectedDatabase] = useState('');
-//   const [collections, setCollections] = useState(['All']);
-//   const [selectedMongoCollections, setSelectedMongoCollections] = useState(['All']);
-//   const [mongoSearchTerm, setMongoSearchTerm] = useState('');
-
-//   // Couchbase State
-//   const [buckets, setBuckets] = useState([]);
-//   const [selectedBucket, setSelectedBucket] = useState('');
-//   const [scopes, setScopes] = useState([]);
-//   const [selectedScope, setSelectedScope] = useState('');
-//   const [couchCollections, setCouchCollections] = useState(['All']);
-//   const [selectedCouchCollections, setSelectedCouchCollections] = useState(['All']);
-//   const [couchSearchTerm, setCouchSearchTerm] = useState('');
-
-//   // Status / errors
-//   const [error, setError] = useState(null);
-//   const [migrationLog, setMigrationLog] = useState([]);
-//   const [isMigrating, setIsMigrating] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const getAuthHeader = async () => {
-//     const token = await getAccessTokenSilently();
-//     return { Authorization: `Bearer ${token}` };
-//   };
-
-//   // Filter collections based on search term
-//   const filteredMongoCollections = useMemo(() => {
-//     return collections.filter(collection => 
-//       collection.toLowerCase().includes(mongoSearchTerm.toLowerCase())
-//     );
-//   }, [collections, mongoSearchTerm]);
-
-//   const filteredCouchCollections = useMemo(() => {
-//     return couchCollections.filter(collection => 
-//       collection.toLowerCase().includes(couchSearchTerm.toLowerCase())
-//     );
-//   }, [couchCollections, couchSearchTerm]);
-
-//   // Fetch MongoDB databases
-//   const fetchDatabases = async () => {
-//     try {
-//       setIsLoading(true);
-//       const headers = await getAuthHeader();
-//       const res = await axios.get(`${API_BASE}/databases`, { headers });
-//       if (Array.isArray(res.data)) {
-//         setDatabases(res.data);
-//         if (!selectedDatabase && res.data.length) setSelectedDatabase(res.data[0]);
-//       }
-//     } catch (e) {
-//       setError('Failed to fetch MongoDB databases');
-//       console.error(e);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   // Fetch collections for selected database
-//   const fetchCollectionsForDB = async (db) => {
-//     if (!db) return;
-//     try {
-//       setIsLoading(true);
-//       const headers = await getAuthHeader();
-//       const res = await axios.get(
-//         `${API_BASE}/databases/${encodeURIComponent(db)}/collections`,
-//         { headers }
-//       );
-//       if (Array.isArray(res.data)) {
-//         setCollections(prependAll(res.data));
-//         setSelectedMongoCollections(['All']);
-//       }
-//     } catch (e) {
-//       setError('Failed to fetch MongoDB collections');
-//       console.error(e);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   // Fetch Couchbase buckets
-//   const fetchBuckets = async () => {
-//     try {
-//       setIsLoading(true);
-//       const headers = await getAuthHeader();
-//       const res = await axios.get(`${API_BASE}/buckets`, { headers });
-//       const bucketList = res.data?.buckets || [];
-//       setBuckets(bucketList);
-//       if (!selectedBucket && bucketList.length) setSelectedBucket(bucketList[0]);
-//     } catch (e) {
-//       setError('Failed to fetch Couchbase buckets');
-//       console.error(e);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   // Fetch scopes and collections for selected bucket
-//   const fetchScopesAndCollections = async (bucket) => {
-//     if (!bucket) return;
-//     try {
-//       setIsLoading(true);
-//       const headers = await getAuthHeader();
-//       await axios.post(
-//         `${API_BASE}/select-bucket`,
-//         null,
-//         { headers, params: { bucketName: bucket } }
-//       );
-//       const res = await axios.get(`${API_BASE}/couchbase-collections`, {
-//         headers,
-//         params: { bucketName: bucket },
-//       });
-//       if (res.data && typeof res.data === 'object') {
-//         const mapping = res.data;
-//         const scopeList = Object.keys(mapping);
-//         setScopes(scopeList);
-//         if (!selectedScope && scopeList.length) setSelectedScope(scopeList[0]);
-//         const activeScope = selectedScope || scopeList[0];
-//         setCouchCollections(prependAll(mapping[activeScope] || []));
-//         setSelectedCouchCollections(['All']);
-//       }
-//     } catch (e) {
-//       setError('Failed to fetch Couchbase scopes/collections');
-//       console.error(e);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   // Handle scope change
-//   useEffect(() => {
-//     if (!selectedBucket || !selectedScope) return;
-//     const update = async () => {
-//       try {
-//         const headers = await getAuthHeader();
-//         const res = await axios.get(`${API_BASE}/couchbase-collections`, {
-//           headers,
-//           params: { bucketName: selectedBucket },
-//         });
-//         if (res.data && typeof res.data === 'object') {
-//           setCouchCollections(prependAll(res.data[selectedScope] || []));
-//           setSelectedCouchCollections(['All']);
-//         }
-//       } catch (e) {
-//         setError('Failed to update Couchbase collections');
-//         console.error(e);
-//       }
-//     };
-//     void update();
-//   }, [selectedScope, selectedBucket]);
-
-//   // Initial data fetching
-//   useEffect(() => {
-//     void fetchDatabases();
-//     void fetchBuckets();
-//   }, []);
-
-//   // Fetch collections when database changes
-//   useEffect(() => {
-//     if (selectedDatabase) {
-//       void fetchCollectionsForDB(selectedDatabase);
-//     }
-//   }, [selectedDatabase]);
-
-//   // Fetch scopes and collections when bucket changes
-//   useEffect(() => {
-//     if (selectedBucket) {
-//       void fetchScopesAndCollections(selectedBucket);
-//     }
-//   }, [selectedBucket, selectedScope]);
-
-//   // Toggle MongoDB collection selection
-//   const toggleMongoCollection = (col) => {
-//     if (col === 'All') {
-//       setSelectedMongoCollections(['All']);
-//     } else {
-//       setSelectedMongoCollections((prev) => {
-//         const withoutAll = prev.filter((c) => c !== 'All');
-//         if (withoutAll.includes(col)) {
-//           return withoutAll.filter((c) => c !== col);
-//         } else {
-//           return [...withoutAll, col];
-//         }
-//       });
-//     }
-//   };
-
-//   // Toggle Couchbase collection selection
-//   const toggleCouchCollection = (col) => {
-//     if (col === 'All') {
-//       setSelectedCouchCollections(['All']);
-//     } else {
-//       setSelectedCouchCollections((prev) => {
-//         const withoutAll = prev.filter((c) => c !== 'All');
-//         if (withoutAll.includes(col)) {
-//           return withoutAll.filter((c) => c !== col);
-//         } else {
-//           return [...withoutAll, col];
-//         }
-//       });
-//     }
-//   };
-
-//   // Get effective collections to migrate (excluding 'All' if selected)
-//   const effectiveMongoCollections = useMemo(() => {
-//     if (selectedMongoCollections.includes('All')) {
-//       return collections.filter((c) => c !== 'All');
-//     }
-//     return selectedMongoCollections;
-//   }, [selectedMongoCollections, collections]);
-
-//   const effectiveCouchCollections = useMemo(() => {
-//     if (selectedCouchCollections.includes('All')) {
-//       return couchCollections.filter((c) => c !== 'All');
-//     }
-//     return selectedCouchCollections;
-//   }, [selectedCouchCollections, couchCollections]);
-
-//   // Handle migration process
-//   const handleMigrate = async () => {
-//     setError(null);
-//     setMigrationLog([]);
-    
-//     // Validation
-//     if (!selectedDatabase) {
-//       setError('Please select a MongoDB database');
-//       return;
-//     }
-//     if (!effectiveMongoCollections.length) {
-//       setError('Please select at least one MongoDB collection');
-//       return;
-//     }
-//     if (!selectedBucket) {
-//       setError('Please select a Couchbase bucket');
-//       return;
-//     }
-//     if (!selectedScope) {
-//       setError('Please select a Couchbase scope');
-//       return;
-//     }
-//     if (!effectiveCouchCollections.length) {
-//       setError('Please select at least one Couchbase collection');
-//       return;
-//     }
-
-//     setIsMigrating(true);
-//     const tokenHeader = await getAuthHeader();
-//     const logEntries = [];
-
-//     try {
-//       // Process each combination of source and target collections
-//       for (const mongoCol of effectiveMongoCollections) {
-//         for (const couchCol of effectiveCouchCollections) {
-//           const payload = {
-//             mongoDatabase: selectedDatabase,
-//             mongoCollection: mongoCol,
-//             bucketName: selectedBucket,
-//             scopeName: selectedScope,
-//             collectionName: couchCol,
-//           };
-
-//           logEntries.push(`Starting migration: ${mongoCol} → ${couchCol}`);
-//           setMigrationLog([...logEntries]);
-
-//           try {
-//             await axios.post(`${API_BASE}/transfer`, payload, {
-//               headers: {
-//                 ...tokenHeader,
-//                 'Content-Type': 'application/json',
-//               },
-//             });
-//             logEntries.push(`Successfully migrated: ${mongoCol} → ${couchCol}`);
-//           } catch (e) {
-//             const msg = e.response?.data?.message || e.message;
-//             logEntries.push(`Failed to migrate: ${mongoCol} → ${couchCol}: ${msg}`);
-//           }
-          
-//           setMigrationLog([...logEntries]);
-//         }
-//       }
-
-//       logEntries.push('Migration process completed');
-//       setMigrationLog([...logEntries]);
-//     } finally {
-//       setIsMigrating(false);
-//     }
-//   };
-
-//   return (
-//     <div className="migration-container">
-//       <div className="migration-header">
-//         {/* <h1>Database Migration Tool</h1> */}
-//         {/* <p>Transfer data between MongoDB and Couchbase collections</p> */}
-//       </div>
-
-//       <div className="migration-content">
-//         <div className="database-panels">
-//           {/* MongoDB Source Panel */}
-//           <div className="database-panel mongo-panel">
-//             <div className="panel-header">
-//               <h2>MongoDB Source</h2>
-//             </div>
-            
-//             <div className="form-group">
-//               <label>Database</label>
-//               <select 
-//                 value={selectedDatabase} 
-//                 onChange={(e) => setSelectedDatabase(e.target.value)}
-//                 disabled={isLoading}
-//               >
-//                 {databases.map((db) => (
-//                   <option key={db} value={db}>{db}</option>
-//                 ))}
-//               </select>
-//             </div>
-
-//             <div className="form-group">
-//               <label>Collections</label>
-//               <div className="search-box">
-//                 <input
-//                   type="text"
-//                   placeholder="Search collections..."
-//                   value={mongoSearchTerm}
-//                   onChange={(e) => setMongoSearchTerm(e.target.value)}
-//                 />
-//               </div>
-//               <div className="collections-list">
-//                 {filteredMongoCollections.map((col) => (
-//                   <div key={col} className="collection-item">
-//                     <label>
-//                       <input
-//                         type="checkbox"
-//                         checked={
-//                           selectedMongoCollections.includes('All')
-//                             ? col === 'All'
-//                             : selectedMongoCollections.includes(col)
-//                         }
-//                         onChange={() => toggleMongoCollection(col)}
-//                       />
-//                       <span>{col}</span>
-//                     </label>
-//                   </div>
-//                 ))}
-//               </div>
-//               <div className="selection-hint">
-//                 {selectedMongoCollections.includes('All') 
-//                   ? 'All collections selected' 
-//                   : `${selectedMongoCollections.filter(c => c !== 'All').length} selected`}
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Couchbase Target Panel */}
-//           <div className="database-panel couchbase-panel">
-//             <div className="panel-header">
-//               <h2>Couchbase Target</h2>
-//             </div>
-            
-//             <div className="form-group">
-//               <label>Bucket</label>
-//               <select 
-//                 value={selectedBucket} 
-//                 onChange={(e) => setSelectedBucket(e.target.value)}
-//                 disabled={isLoading}
-//               >
-//                 {buckets.map((b) => (
-//                   <option key={b} value={b}>{b}</option>
-//                 ))}
-//               </select>
-//             </div>
-
-//             <div className="form-group">
-//               <label>Scope</label>
-//               <select 
-//                 value={selectedScope} 
-//                 onChange={(e) => setSelectedScope(e.target.value)}
-//                 disabled={isLoading}
-//               >
-//                 {scopes.map((s) => (
-//                   <option key={s} value={s}>{s}</option>
-//                 ))}
-//               </select>
-//             </div>
-
-//             <div className="form-group">
-//               <label>Collections</label>
-//               <div className="search-box">
-//                 <input
-//                   type="text"
-//                   placeholder="Search collections..."
-//                   value={couchSearchTerm}
-//                   onChange={(e) => setCouchSearchTerm(e.target.value)}
-//                 />
-//               </div>
-//               <div className="collections-list">
-//                 {filteredCouchCollections.map((col) => (
-//                   <div key={col} className="collection-item">
-//                     <label>
-//                       <input
-//                         type="checkbox"
-//                         checked={
-//                           selectedCouchCollections.includes('All')
-//                             ? col === 'All'
-//                             : selectedCouchCollections.includes(col)
-//                         }
-//                         onChange={() => toggleCouchCollection(col)}
-//                       />
-//                       <span>{col}</span>
-//                     </label>
-//                   </div>
-//                 ))}
-//               </div>
-//               <div className="selection-hint">
-//                 {selectedCouchCollections.includes('All') 
-//                   ? 'All collections selected' 
-//                   : `${selectedCouchCollections.filter(c => c !== 'All').length} selected`}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Migration Controls */}
-//         <div className="migration-controls">
-//           {error && <div className="error-message">{error}</div>}
-          
-//           <button 
-//             onClick={handleMigrate} 
-//             disabled={isMigrating || isLoading}
-//             className="migrate-button"
-//           >
-//             {isMigrating ? (
-//               <>
-//                 <span className="spinner"></span>
-//                 Migrating...
-//               </>
-//             ) : 'Start Migration'}
-//           </button>
-//         </div>
-
-//         {/* Migration Log */}
-//         {migrationLog.length > 0 && (
-//           <div className="migration-log">
-//             <h3>Migration Log</h3>
-//             <div className="log-content">
-//               {migrationLog.map((line, i) => (
-//                 <div key={i} className="log-entry">
-//                   {line.includes('Successfully') ? (
-//                     <span className="success-icon">✓</span>
-//                   ) : line.includes('Failed') ? (
-//                     <span className="error-icon">✗</span>
-//                   ) : (
-//                     <span className="info-icon">ℹ</span>
-//                   )}
-//                   <span>{line}</span>
-//                 </div>
-//               ))}
-//             </div>
-            
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -513,10 +30,11 @@ export default function Collection() {
 
   // Status / errors
   const [error, setError] = useState(null);
-  const [migrationLog, setMigrationLog] = useState([]);
   const [isMigrating, setIsMigrating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [migrationStarted, setMigrationStarted] = useState(false);
+  const [migrationCompleted, setMigrationCompleted] = useState(false); // New state to track migration completion
 
   const getAuthHeader = async () => {
     const token = await getAccessTokenSilently();
@@ -569,7 +87,7 @@ export default function Collection() {
   useEffect(() => {
     const fetchCollections = async () => {
       if (!selectedDatabase) return;
-      
+     
       try {
         const headers = await getAuthHeader();
         const res = await axios.get(
@@ -591,7 +109,7 @@ export default function Collection() {
   useEffect(() => {
     const fetchBucketData = async () => {
       if (!selectedBucket) return;
-      
+     
       try {
         const headers = await getAuthHeader();
         await axios.post(
@@ -603,16 +121,16 @@ export default function Collection() {
           headers,
           params: { bucketName: selectedBucket },
         });
-        
+       
         if (res.data && typeof res.data === 'object') {
           const mapping = res.data;
           const scopeList = Object.keys(mapping);
           setScopes(scopeList);
-          
+         
           if (!selectedScope && scopeList.length) {
             setSelectedScope(scopeList[0]);
           }
-          
+         
           const activeScope = selectedScope || (scopeList.length ? scopeList[0] : '');
           if (activeScope) {
             setCouchCollections(prependAll(mapping[activeScope] || []));
@@ -626,47 +144,88 @@ export default function Collection() {
     fetchBucketData();
   }, [selectedBucket, selectedScope, lastRefresh]);
 
-  // [REST OF THE ORIGINAL CODE REMAINS EXACTLY THE SAME]
   // Filter collections based on search term
   const filteredMongoCollections = useMemo(() => {
-    return collections.filter(collection => 
+    return collections.filter(collection =>
       collection.toLowerCase().includes(mongoSearchTerm.toLowerCase())
     );
   }, [collections, mongoSearchTerm]);
 
   const filteredCouchCollections = useMemo(() => {
-    return couchCollections.filter(collection => 
+    return couchCollections.filter(collection =>
       collection.toLowerCase().includes(couchSearchTerm.toLowerCase())
     );
   }, [couchCollections, couchSearchTerm]);
 
-  // Toggle MongoDB collection selection
+  // Toggle MongoDB collection selection - UPDATED with proper "All" behavior
   const toggleMongoCollection = (col) => {
     if (col === 'All') {
-      setSelectedMongoCollections(['All']);
+      if (selectedMongoCollections.includes('All')) {
+        // If "All" is already selected, deselect everything
+        setSelectedMongoCollections([]);
+      } else {
+        // If "All" is not selected, select "All" and all collections
+        setSelectedMongoCollections(['All', ...collections.filter(c => c !== 'All')]);
+      }
     } else {
       setSelectedMongoCollections((prev) => {
         const withoutAll = prev.filter((c) => c !== 'All');
+       
         if (withoutAll.includes(col)) {
-          return withoutAll.filter((c) => c !== col);
+          // Deselect this collection
+          const newSelection = withoutAll.filter((c) => c !== col);
+         
+          // If no collections are selected, select "All"
+          if (newSelection.length === 0) {
+            return ['All'];
+          }
+          return newSelection;
         } else {
-          return [...withoutAll, col];
+          // Select this collection
+          const newSelection = [...withoutAll, col];
+         
+          // If all collections are selected, select "All" instead
+          if (newSelection.length === collections.filter(c => c !== 'All').length) {
+            return ['All'];
+          }
+          return newSelection;
         }
       });
     }
   };
 
-  // Toggle Couchbase collection selection
+  // Toggle Couchbase collection selection - UPDATED with proper "All" behavior
   const toggleCouchCollection = (col) => {
     if (col === 'All') {
-      setSelectedCouchCollections(['All']);
+      if (selectedCouchCollections.includes('All')) {
+        // If "All" is already selected, deselect everything
+        setSelectedCouchCollections([]);
+      } else {
+        // If "All" is not selected, select "All" and all collections
+        setSelectedCouchCollections(['All', ...couchCollections.filter(c => c !== 'All')]);
+      }
     } else {
       setSelectedCouchCollections((prev) => {
         const withoutAll = prev.filter((c) => c !== 'All');
+       
         if (withoutAll.includes(col)) {
-          return withoutAll.filter((c) => c !== col);
+          // Deselect this collection
+          const newSelection = withoutAll.filter((c) => c !== col);
+         
+          // If no collections are selected, select "All"
+          if (newSelection.length === 0) {
+            return ['All'];
+          }
+          return newSelection;
         } else {
-          return [...withoutAll, col];
+          // Select this collection
+          const newSelection = [...withoutAll, col];
+         
+          // If all collections are selected, select "All" instead
+          if (newSelection.length === couchCollections.filter(c => c !== 'All').length) {
+            return ['All'];
+          }
+          return newSelection;
         }
       });
     }
@@ -690,8 +249,7 @@ export default function Collection() {
   // Handle migration process
   const handleMigrate = async () => {
     setError(null);
-    setMigrationLog([]);
-    
+   
     // Validation
     if (!selectedDatabase) {
       setError('Please select a MongoDB database');
@@ -714,9 +272,10 @@ export default function Collection() {
       return;
     }
 
+    setMigrationStarted(true);
     setIsMigrating(true);
+    setMigrationCompleted(false); // Reset completion status
     const tokenHeader = await getAuthHeader();
-    const logEntries = [];
 
     try {
       // Process each combination of source and target collections
@@ -730,9 +289,6 @@ export default function Collection() {
             collectionName: couchCol,
           };
 
-          logEntries.push(`Starting migration: ${mongoCol} → ${couchCol}`);
-          setMigrationLog([...logEntries]);
-
           try {
             await axios.post(`${API_BASE}/transfer`, payload, {
               headers: {
@@ -740,20 +296,14 @@ export default function Collection() {
                 'Content-Type': 'application/json',
               },
             });
-            logEntries.push(`Successfully migrated: ${mongoCol} → ${couchCol}`);
           } catch (e) {
-            const msg = e.response?.data?.message || e.message;
-            logEntries.push(`Failed to migrate: ${mongoCol} → ${couchCol}: ${msg}`);
+            console.error(`Failed to migrate: ${mongoCol} → ${couchCol}`, e);
           }
-          
-          setMigrationLog([...logEntries]);
         }
       }
-
-      logEntries.push('Migration process completed');
-      setMigrationLog([...logEntries]);
     } finally {
       setIsMigrating(false);
+      setMigrationCompleted(true); // Set migration as completed
     }
   };
 
@@ -775,11 +325,11 @@ export default function Collection() {
             <div className="panel-header">
               <h2>MongoDB Source</h2>
             </div>
-            
+           
             <div className="form-group">
               <label>Database</label>
-              <select 
-                value={selectedDatabase} 
+              <select
+                value={selectedDatabase}
                 onChange={(e) => setSelectedDatabase(e.target.value)}
                 disabled={isLoading || isMigrating}
               >
@@ -806,11 +356,7 @@ export default function Collection() {
                     <label>
                       <input
                         type="checkbox"
-                        checked={
-                          selectedMongoCollections.includes('All')
-                            ? col === 'All'
-                            : selectedMongoCollections.includes(col)
-                        }
+                        checked={selectedMongoCollections.includes(col)}
                         onChange={() => toggleMongoCollection(col)}
                         disabled={isMigrating}
                       />
@@ -820,8 +366,8 @@ export default function Collection() {
                 ))}
               </div>
               <div className="selection-hint">
-                {selectedMongoCollections.includes('All') 
-                  ? 'All collections selected' 
+                {selectedMongoCollections.includes('All')
+                  ? 'All collections selected'
                   : `${selectedMongoCollections.filter(c => c !== 'All').length} selected`}
               </div>
             </div>
@@ -832,11 +378,11 @@ export default function Collection() {
             <div className="panel-header">
               <h2>Couchbase Target</h2>
             </div>
-            
+           
             <div className="form-group">
               <label>Bucket</label>
-              <select 
-                value={selectedBucket} 
+              <select
+                value={selectedBucket}
                 onChange={(e) => setSelectedBucket(e.target.value)}
                 disabled={isLoading || isMigrating}
               >
@@ -848,8 +394,8 @@ export default function Collection() {
 
             <div className="form-group">
               <label>Scope</label>
-              <select 
-                value={selectedScope} 
+              <select
+                value={selectedScope}
                 onChange={(e) => setSelectedScope(e.target.value)}
                 disabled={isLoading || isMigrating}
               >
@@ -876,11 +422,7 @@ export default function Collection() {
                     <label>
                       <input
                         type="checkbox"
-                        checked={
-                          selectedCouchCollections.includes('All')
-                            ? col === 'All'
-                            : selectedCouchCollections.includes(col)
-                        }
+                        checked={selectedCouchCollections.includes(col)}
                         onChange={() => toggleCouchCollection(col)}
                         disabled={isMigrating}
                       />
@@ -890,8 +432,8 @@ export default function Collection() {
                 ))}
               </div>
               <div className="selection-hint">
-                {selectedCouchCollections.includes('All') 
-                  ? 'All collections selected' 
+                {selectedCouchCollections.includes('All')
+                  ? 'All collections selected'
                   : `${selectedCouchCollections.filter(c => c !== 'All').length} selected`}
               </div>
             </div>
@@ -901,75 +443,62 @@ export default function Collection() {
         {/* Migration Controls */}
         <div className="migration-controls">
           {error && <div className="error-message">{error}</div>}
-          
-          <button 
-            onClick={handleMigrate} 
-            disabled={isMigrating || isLoading}
-            className="migrate-button"
-          >
-            {isMigrating ? (
-              <>
-                <span className="spinner"></span>
-                Migrating...
-              </>
-            ) : 'Start Migration'}
-            
-          </button>
-          {/* <Migrationwebsocket/> */}
-
-          <Migrationwebsocket
-  migrations={[
-    {
-      source: { database: 'db1', collection: 'coll1' },
-      target: { bucket: 'bucket1', scope: 'scope1', collection: 'coll1' }
-    },
-    {
-      source: { database: 'db1', collection: 'coll2' },
-      target: { bucket: 'bucket1', scope: 'scope1', collection: 'coll2' }
-    }
-  ]}
-/>
-        </div>
-
-        {/* {migrationLog.length > 0 && (
-          <div className="migration-log">
-            <h3>Migration Log</h3>
-            <div className="log-content">
-              {migrationLog.map((line, i) => (
-                <div key={i} className="log-entry">
-                  {line.includes('Successfully') ? (
-                    <span className="success-icon">✓</span>
-                  ) : line.includes('Failed') ? (
-                    <span className="error-icon">✗</span>
-                  ) : (
-                    <span className="info-icon">ℹ</span>
-                  )}
-                  <span>{line}</span>
-                </div>
-              ))}
-            </div> */}
-
-
-
-            <button 
-              className="function-button"
-              onClick={() => navigate('/functions', { 
-                state: { 
-                  selectedDatabase,
-                  selectedBucket,
-                  selectedScope 
-                } 
-              })}
-              disabled={isMigrating}
+         
+          {/* Show only Start Migration button initially */}
+          {!migrationStarted && (
+            <button
+              onClick={handleMigrate}
+              disabled={isLoading}
+              className="migrate-button"
             >
-              Migrate Functions
+              Start Migration
             </button>
-          {/* </div> */}
-        {/* // )} */}
+          )}
+         
+          {/* Show progress bar and Migrate Functions button after migration starts */}
+          {migrationStarted && (
+            <>
+              <button
+                onClick={handleMigrate}
+                disabled={isMigrating || isLoading}
+                className="migrate-button"
+              >
+                {isMigrating ? (
+                  <>
+                    <span className="spinner"></span>
+                    Migrating...
+                  </>
+                ) : 'Start Migration'}
+              </button>
+             
+              <Migrationwebsocket
+                migrations={[
+                  {
+                    source: { database: selectedDatabase, collection: 'All' },
+                    target: { bucket: selectedBucket, scope: selectedScope, collection: 'All' }
+                  }
+                ]}
+              />
+
+              {/* Show Migrate Functions button only after migration is completed */}
+              {migrationCompleted && (
+                <button
+                  className="function-button"
+                  onClick={() => navigate('/functions', {
+                    state: {
+                      selectedDatabase,
+                      selectedBucket,
+                      selectedScope
+                    }
+                  })}
+                >
+                  Migrate Functions
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 }
-
-
-

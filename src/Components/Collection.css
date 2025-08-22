@@ -154,6 +154,7 @@ select:focus {
   align-items: center;
   justify-content: center;
   min-width: 200px;
+  margin-bottom: 1rem; /* Added margin to separate from other buttons */
 }
 
 .migrate-button:hover {
@@ -161,6 +162,31 @@ select:focus {
 }
 
 .migrate-button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.function-button {
+  background-color: #2ecc71; /* Different color to distinguish from migrate button */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px; /* Same width as migrate-button */
+  margin-bottom: 1rem; /* Added margin for consistency */
+}
+
+.function-button:hover {
+  background-color: #27ae60;
+}
+
+.function-button:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
 }
@@ -231,6 +257,14 @@ select:focus {
   font-weight: bold;
 }
 
+/* Button container for consistent alignment */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .database-panels {
@@ -243,5 +277,12 @@ select:focus {
   
   .panel-header h2 {
     font-size: 1.2rem;
+  }
+  
+  .migrate-button,
+  .function-button {
+    min-width: 180px; /* Slightly smaller on mobile */
+    width: 100%;
+    max-width: 250px;
   }
 }
