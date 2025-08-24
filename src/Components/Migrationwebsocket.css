@@ -130,4 +130,438 @@
     gap: 10px;
     text-align: center;
   }
+} 
+
+
+
+/* Notifications Panel */
+.notifications-panel {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
 }
+
+.notifications-panel h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.notifications-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.notification {
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 4px;
+  border-left: 4px solid #ccc;
+}
+
+.notification.insert {
+  border-left-color: #4caf50;
+  background-color: #e8f5e9;
+}
+
+.notification.delete {
+  border-left-color: #f44336;
+  background-color: #ffebee;
+}
+
+.notification.drop {
+  border-left-color: #ff9800;
+  background-color: #fff3e0;
+}
+
+.notification-time {
+  font-size: 0.8em;
+  color: #666;
+  margin-right: 10px;
+}
+
+.notification-message {
+  font-size: 0.9em;
+}
+
+/* Start Button */
+.start-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.start-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.start-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Connection Status */
+.connection-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.connection-status.connected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.connection-status.disconnected {
+  background-color: #f44336;
+  color: white;
+} */
+
+
+
+/* this code is working for websocket */
+/* Progress Bar Styles */
+ .progress-bar-container {
+  width: 800px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 25px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(45deg, #4caf50, #8bc34a);
+  transition: width 0.3s ease;
+  border-radius: 12px;
+}
+
+.progress-text {
+  font-size: 18px;
+  margin-bottom: 15px;
+} */
+
+/* Status Text */
+.status-text {
+  margin: 15px 0;
+  font-size: 16px;
+  color: #555;
+} */
+
+/* Notifications Panel */
+ .notifications-panel {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  max-height: 200px;
+  overflow-y: auto;
+} */
+
+.notifications-panel h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+} */
+
+ .notification {
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 4px;
+  border-left: 4px solid #ccc;
+  display: flex;
+  align-items: center;
+} */
+
+.notification.insert {
+  border-left-color: #4caf50;
+  background-color: #e8f5e9;
+}
+
+.notification.delete {
+  border-left-color: #f44336;
+  background-color: #ffebee;
+}
+
+.notification.update {
+  border-left-color: #2196f3;
+  background-color: #e3f2fd;
+}
+
+.notification-time {
+  font-size: 0.8em;
+  color: #666;
+  margin-right: 10px;
+  min-width: 70px;
+}
+
+.notification-message {
+  font-size: 0.9em;
+  flex-grow: 1;
+}
+
+.notification-count {
+  background-color: #666;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 0.7em;
+  margin-left: 5px;
+} */
+
+/* Metrics Container */
+ .metrics-container {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.metrics-container h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.metric-item {
+  text-align: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+} */
+
+/* CDC Operations Summary */
+ .cdc-summary {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.cdc-summary h5 {
+  margin: 0 0 10px 0;
+  color: #666;
+}
+
+.cdc-operations {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cdc-operation {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.cdc-operation.insert {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.cdc-operation.delete {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.cdc-operation.update {
+  background-color: #e3f2fd;
+  color: #1565c0;
+} */
+
+/* Connection Status */
+ .connection-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.connection-status.connected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.connection-status.disconnected {
+  background-color: #f44336;
+  color: white;
+} */
+
+/* Start Button */
+ .start-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.start-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.start-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+} */
+
+/* Error Message */
+ .error-message {
+  color: #f44336;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-top: 10px;
+} */
+
+
+/* Progress Container */
+ .progress-container {
+  width: 800px;
+  margin: 0 auto;
+  text-align: center;
+} 
+
+/* Progress Bar */
+ .progress-bar {
+  width: 100%;
+  height: 25px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(45deg, #4caf50, #8bc34a);
+  transition: width 0.3s ease;
+  border-radius: 12px;
+} */
+
+/* Progress Text */
+ .progress-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+
+/* Migration Summary Styles */
+.migration-summary {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.migration-summary h4 {
+  margin: 0 0 15px 0;
+  color: #28a745;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.summary-value {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #495057;
+}
+
+.summary-value.success {
+  color: #28a745;
+  font-weight: 600;
+}
+
+/* Responsive design for summary */
+@media (max-width: 768px) {
+  .summary-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .migration-summary {
+    padding: 15px;
+  }
+}
+
+
+
+
+
+
+
+
