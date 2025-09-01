@@ -146,7 +146,7 @@
 
 /* AnalysisPage.css */
 
-/* Main Container */
+/*Main Container
 .analysis-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -155,12 +155,131 @@
 }
 
 /* Header */
-.analysis-header {
+/* .analysis-header {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 2rem;
   font-size: 2.5rem;
   font-weight: 100;
+  letter-spacing: 1px;
+} */
+
+/* Summary Section - Horizontal Row */
+/* .summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  gap: 1.5rem;
+} */
+
+/* .summary-card {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  flex: 1;
+  min-width: 200px; */
+/* } */
+
+/* .summary-card:hover {
+  transform: translateY(-5px);
+} */
+
+/* .summary-card h3 {
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+} */
+
+/* .summary-card h4 {
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500; */
+/* } */
+
+/* .summary-card p {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin: 0;
+} */
+
+/* Data Size Section */
+/* .data-size-container {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+} */
+
+/* .data-size-header {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-weight: 300;
+  text-align: center; */
+/* } */
+
+/* Buttons */
+/* .navigation-buttons {
+  text-align: center;
+  margin-top: 2rem;
+} */
+
+/* .proceed-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+} */
+
+/* .proceed-button:hover {
+  background: #2980b9;
+} */
+
+/* Loading and Error States */
+/* .loading-container,
+.error-container {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+} */
+
+/* .error-container {
+  color: #e74c3c;
+} */
+
+/* Responsive adjustments */
+/* @media (max-width: 768px) {
+  .summary-row {
+    flex-direction: column;
+  }
+} */
+
+
+.analysis-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header - Centered with maroon color */
+.analysis-heading {
+  text-align: center;
+  color: #790022; /* Maroon color */
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 600;
   letter-spacing: 1px;
 }
 
@@ -172,6 +291,7 @@
   gap: 1.5rem;
 }
 
+/* Cards with black outline */
 .summary-card {
   background: white;
   border-radius: 10px;
@@ -181,24 +301,23 @@
   transition: transform 0.3s ease;
   flex: 1;
   min-width: 200px;
+  border: 2px solid #000000; /* Black outline */
 }
 
 .summary-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Black shadow on hover */
 }
 
+/* Card headings with black color and maroon underline */
 .summary-card h3 {
-  color: #7f8c8d;
+  color: #000000; /* Black color */
   margin-bottom: 1rem;
   font-size: 1.2rem;
   font-weight: 500;
-}
-
-.summary-card h4 {
-  color: #7f8c8d;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: #800000; /* Maroon underline */
+  text-underline-offset: 4px;
 }
 
 .summary-card p {
@@ -215,13 +334,17 @@
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 3rem;
+  border: 2px solid #000000; /* Black outline */
 }
 
-.data-size-header {
-  color: #2c3e50;
+.data-size-heading {
+  color: #000000; /* Black color */
   margin-bottom: 2rem;
-  font-weight: 300;
+  font-weight: 600;
   text-align: center;
+  text-decoration: underline;
+  text-decoration-color: #800000; /* Maroon underline */
+  text-underline-offset: 4px;
 }
 
 /* Buttons */
@@ -231,7 +354,7 @@
 }
 
 .proceed-button {
-  background: #3498db;
+  background: #800000; /* Maroon color */
   color: white;
   border: none;
   padding: 0.8rem 2rem;
@@ -242,7 +365,7 @@
 }
 
 .proceed-button:hover {
-  background: #2980b9;
+  background: #600000; /* Darker maroon */
 }
 
 /* Loading and Error States */
@@ -255,7 +378,7 @@
 }
 
 .error-container {
-  color: #e74c3c;
+  color: #3ce759;
 }
 
 /* Responsive adjustments */
@@ -263,13 +386,8 @@
   .summary-row {
     flex-direction: column;
   }
+  
+  .analysis-heading {
+    font-size: 2rem;
+  }
 }
-
-/* Add this to your existing Analysispage.css */
-/* .summary-card small {
-  display: block;
-  color: #7f8c8d;
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  opacity: 0.8;
-} */
